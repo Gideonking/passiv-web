@@ -11,6 +11,7 @@ import PortfolioGroupMetadata from '../components/PortfolioGroupMetadata';
 import PortfolioGroupTargets from '../components/PortfolioGroupTargets';
 import AccountTrades from '../components/AccountTrades';
 import PortfolioGroupSettings from '../components/PortfolioGroupSettings';
+import PortfolioGroupErrors from '../components/PortfolioGroupErrors';
 import AccountHoldings from '../components/AccountHoldings';
 import {
   selectCurrentGroupTotalEquity,
@@ -20,6 +21,7 @@ import {
   selectCurrentGroupPositions,
   selectCurrentGroupBalances,
   selectCurrentGroupTrades,
+  selectCurrentGroupInfoError,
   selectCurrentGroupSetupComplete,
 } from '../selectors';
 import {
@@ -53,6 +55,7 @@ const GroupPage = props => {
     positions,
     cash,
     equity,
+    error,
     setupComplete,
     loading,
     reloadAllState,
@@ -108,21 +111,32 @@ const GroupPage = props => {
           balances={balances}
           cash={cash}
           equity={equity}
+          error={error}
         />
         <PortfolioGroupAccuracy accuracy={accuracy} loading={loading} />
       </Container2Column>
 
       {tradeDisplay}
 
-      <PortfolioGroupTargets positions={positions} />
+      {error ? <PortfolioGroupErrors error={error} /> : null}
+
+      <PortfolioGroupTargets positions={positions} error={error} />
 
       <Container2Column>
-        <PortfolioGroupHoldings positions={positions} loading={loading} />
+        <PortfolioGroupHoldings
+          positions={positions}
+          loading={loading}
+          error={error}
+        />
         <PortfolioGroupSettings />
       </Container2Column>
       {accounts &&
         accounts.map(account => (
-          <AccountHoldings account={account} key={account.number} />
+          <AccountHoldings
+            account={account}
+            key={account.number}
+            error={error}
+          />
         ))}
       <Tooltip />
     </React.Fragment>
@@ -140,6 +154,7 @@ const select = state => ({
   setupComplete: selectCurrentGroupSetupComplete(state),
   loading: selectGroupsLoading(state),
   accounts: selectCurrentGroupAccountHoldings(state),
+  error: selectCurrentGroupInfoError(state),
 });
 
 const actions = {
