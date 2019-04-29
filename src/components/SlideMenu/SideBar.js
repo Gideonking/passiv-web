@@ -72,6 +72,7 @@ const SideBar = props => {
       <StyledAside>
         <SideBarLink name="Dashboard" linkPath="/app/dashboard" />
         <GroupContainer>{groups}</GroupContainer>
+        <SideBarLink name="Wealthica" linkPath="/app/wealthica" />
         <SideBarLink name="Settings" linkPath="/app/settings" />
         <SideBarFooter />
       </StyledAside>
