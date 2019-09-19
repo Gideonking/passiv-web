@@ -17,6 +17,7 @@ import CouponPage from './pages/CouponPage';
 import SecureRoute from './routes/SecureRoute';
 import UpdateNotification from './components/UpdateNotification';
 import SharePage from './pages/SharePage';
+import WealthicaAddon from './pages/WealthicaAddon';
 
 declare global {
   interface Window {
@@ -126,6 +127,11 @@ const App = () => {
             render={() => alpacaOauthRedirect()}
           />
           <Route path={prefixPath('/share')} component={SharePage} />
+          <Route
+            exact
+            path={prefixPath('/wealthica')}
+            component={WealthicaAddon}
+          />
           <UpdateNotification />
         </Switch>
       </StripeProvider>

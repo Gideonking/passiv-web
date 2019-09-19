@@ -525,3 +525,83 @@ export const importTarget: ActionCreator<
 export const updateServiceWorker: ActionCreator<Action> = () => ({
   type: 'UPDATE_SERVICE_WORKER',
 });
+
+declare var Addon: any;
+
+export const wealthicaLoad: ActionCreator<
+  ThunkAction<void, any, any, Action<any>>
+> = () => {
+  return dispatch => {
+    dispatch(fetchWealthicaStart());
+
+    console.log('addon', Addon);
+    var addon: any, addonOptions: any;
+    addon = new Addon();
+    addon
+      .on('init', function(options: any) {
+        // Dashboard is ready and is signaling to the add-on that it should
+        // render using the passed in options (filters, language, etc.)
+        addonOptions = options;
+        console.log('addonOptions', addonOptions);
+        // $('button').removeAttr('disabled');
+        // showAddonData(addonOptions.data, true);
+      })
+      .on('update', function(options: any) {
+        // Filters have been updated and Dashboard is passing in updated options
+        addonOptions = { ...addonOptions, ...options };
+        // showAddonData(addonOptions.data);
+      });
+
+    // Compose a query object from the addon options to pass to the API calls.
+    function getQueryFromOptions(options: any) {
+      console.log('options', options);
+      if (options) {
+        return {
+          from: options.dateRangeFilter && options.dateRangeFilter[0],
+          to: options.dateRangeFilter && options.dateRangeFilter[1],
+          groups: options.groupsFilter,
+          institutions: options.institutionsFilter,
+          investments:
+            options.investmentsFilter === 'all'
+              ? null
+              : options.investmentsFilter,
+        };
+      } else {
+        return null;
+      }
+    }
+
+    console.log('query', getQueryFromOptions(addonOptions));
+
+    addon.api
+      .getPositions(getQueryFromOptions(addonOptions))
+      .then(function(response: any) {
+        console.log('response', response);
+        alert(JSON.stringify(response));
+        // $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
+      })
+      .catch(function(err: any) {
+        // $('#result').html('Error:<br><code>' + err + '</code>');
+      })
+      .finally(function() {
+        // $('#getPositions').removeAttr('disabled');
+      });
+    // getData('/api/v1/authorizations')
+    //   .then(response => dispatch(fetchWealthicaSuccess(response)))
+    //   .catch(error => dispatch(fetchWealthicaError(error)));
+  };
+};
+
+export const fetchWealthicaStart: ActionCreator<Action> = () => ({
+  type: 'FETCH_WEALTHICA_START',
+});
+
+export const fetchWealthicaSuccess: ActionCreator<Action> = payload => ({
+  type: 'FETCH_WEALTHICA_SUCCESS',
+  payload,
+});
+
+export const fetchWealthicaError: ActionCreator<Action> = payload => ({
+  type: 'FETCH_WEALTHICA_ERROR',
+  payload,
+});
