@@ -13,6 +13,7 @@ import {
   selectCurrentGroupPositions,
   selectCurrentGroupTotalEquityExcludedRemoved,
   selectCurrentGroupCash,
+  selectCurrentGroupTotalEquity,
 } from '../../selectors/groups';
 import { selectIsEditMode } from '../../selectors/router';
 import TargetBar from './TargetBar';
@@ -89,8 +90,11 @@ export const TargetSelector = ({ lockable, target, onReset }: Props) => {
   const groupId = useSelector(selectCurrentGroupId);
   const positions = useSelector(selectCurrentGroupPositions);
   const totalEquity = useSelector(selectCurrentGroupTotalEquityExcludedRemoved);
+  const totalBalancedEquity = useSelector(selectCurrentGroupTotalEquity);
   const cash = useSelector(selectCurrentGroupCash);
   const edit = useSelector(selectIsEditMode);
+
+  console.log('positions', positions);
 
   const dispatch = useDispatch();
 
@@ -243,22 +247,31 @@ export const TargetSelector = ({ lockable, target, onReset }: Props) => {
       onReset={values => {
         values.targets = target;
       }}
-      render={props => (
-        <div>
-          <Th>
-            <Legend>
-              <TargetTitle>Target</TargetTitle>
-              <ActualTitle>Actual</ActualTitle>
-              {edit && <ExcludeTitle>Exclude</ExcludeTitle>}
-            </Legend>
-          </Th>
-          <FieldArray
-            name="targets"
-            render={arrayHelpers => {
-              // calculate any new targets actual percentages
-              props.values.targets
-                .filter(target => target.actualPercentage === undefined)
-                .forEach(target => {
+      render={props => {
+        let excludedEquity = 0;
+        props.values.targets.map(t => {
+          if (t.is_excluded || !t.is_supported) {
+            excludedEquity += positions.find(p => p.symbol.id === t.symbol)
+              .uniformEquity;
+          }
+          return null;
+        });
+        const currentTotalEquity = totalBalancedEquity - excludedEquity;
+        console.log('currentTotalEquity', currentTotalEquity);
+        return (
+          <div>
+            <Th>
+              <Legend>
+                <TargetTitle>Target</TargetTitle>
+                <ActualTitle>Actual</ActualTitle>
+                {edit && <ExcludeTitle>Exclude</ExcludeTitle>}
+              </Legend>
+            </Th>
+            <FieldArray
+              name="targets"
+              render={arrayHelpers => {
+                // calculate any new targets actual percentages
+                props.values.targets.forEach(target => {
                   if (
                     positions &&
                     positions.find(
@@ -270,210 +283,214 @@ export const TargetSelector = ({ lockable, target, onReset }: Props) => {
                     );
                     if (position) {
                       target.actualPercentage =
-                        ((position.price * position.units) / totalEquity) * 100;
+                        ((position.price * position.units) /
+                          currentTotalEquity) *
+                        100;
                     }
                   }
+                  console.log(target, target.actualPercentage);
                 });
 
-              // calculate the desired cash percentage
-              const cashPercentage =
-                100 -
-                props.values.targets.reduce((total: number, target: any) => {
-                  if (!target.deleted && target.percent) {
-                    return total + parseFloat(target.percent);
-                  }
-                  return total;
-                }, 0);
+                // calculate the desired cash percentage
+                const cashPercentage =
+                  100 -
+                  props.values.targets.reduce((total: number, target: any) => {
+                    if (!target.deleted && target.percent) {
+                      return total + parseFloat(target.percent);
+                    }
+                    return total;
+                  }, 0);
+                console.log('actual cash', cash);
+                // calculate the actual cash percentage
+                const cashActualPercentage = (cash / currentTotalEquity) * 100;
 
-              // calculate the actual cash percentage
-              const cashActualPercentage = (cash / totalEquity) * 100;
-
-              if (props.values.targets.filter(t => !t.deleted).length === 0) {
-                arrayHelpers.push(generateNewTarget());
-              }
-
-              // generate the share url
-              let shareUrl = `/app/share?`;
-              props.values.targets.forEach((target: any) => {
-                if (target.fullSymbol && target.fullSymbol.symbol) {
-                  return (shareUrl += `symbols[]=${target.fullSymbol.symbol}&percentages[]=${target.percent}&`);
-                } else {
-                  return null;
+                if (props.values.targets.filter(t => !t.deleted).length === 0) {
+                  arrayHelpers.push(generateNewTarget());
                 }
-              });
-              shareUrl = shareUrl.substr(0, shareUrl.length - 1);
-              var excludedAssetCount = props.values.targets.filter(
-                target => target.is_excluded === true,
-              ).length;
 
-              return (
-                <React.Fragment>
-                  {props.values.targets.map((t, index) => {
-                    if (t.deleted) {
-                      return null;
-                    }
-                    if (edit === false && t.is_excluded === true) {
-                      return null;
-                    }
+                // generate the share url
+                let shareUrl = `/app/share?`;
+                props.values.targets.forEach((target: any) => {
+                  if (target.fullSymbol && target.fullSymbol.symbol) {
+                    return (shareUrl += `symbols[]=${target.fullSymbol.symbol}&percentages[]=${target.percent}&`);
+                  } else {
+                    return null;
+                  }
+                });
+                shareUrl = shareUrl.substr(0, shareUrl.length - 1);
+                var excludedAssetCount = props.values.targets.filter(
+                  target => target.is_excluded === true,
+                ).length;
 
-                    return (
-                      <div key={t.key}>
-                        <TargetBar
-                          key={t.symbol}
-                          target={t}
-                          edit={canEdit}
-                          setSymbol={symbol => {
-                            setSymbol(t, symbol);
-                            props.setFieldTouched(
-                              `targets.${index}.symbol` as 'targets',
-                            );
-                          }}
-                          onDelete={key => {
-                            let target = props.values.targets.find(
-                              t => t.key === key,
-                            );
-                            if (!target) {
-                              return;
-                            }
-                            target.deleted = true;
-                            props.setFieldTouched(
-                              `targets.${index}.percent` as 'targets',
-                            );
-                            props.setFieldValue(
-                              `targets.${index}.percent` as 'targets',
-                              -0.1,
-                            );
-                          }}
-                          onExclude={key => {
-                            let target = props.values.targets.find(
-                              t => t.key === key,
-                            );
-                            if (!target) {
-                              return;
-                            }
-                            const newExcluded = !target.is_excluded;
-                            target.is_excluded = newExcluded;
-                            props.setFieldTouched(
-                              `targets.${index}.percent` as 'targets',
-                            );
-                            props.setFieldValue(
-                              `targets.${index}.percent` as 'targets',
-                              0,
-                            );
-                          }}
-                        >
-                          <input
-                            type="number"
-                            name={`targets.${index}.percent`}
-                            value={props.values.targets[index].percent}
-                            tabIndex={index + 1}
-                            onChange={e =>
-                              props.setFieldValue(
-                                `targets.${index}.percent` as 'targets',
-                                parseFloat(e.target.value),
-                              )
-                            }
-                            onBlur={() => {
-                              props.setFieldValue(
-                                `targets.${index}.percent` as 'targets',
-                                parseFloat(
-                                  props.values.targets[index].percent.toFixed(
-                                    1,
-                                  ),
-                                ),
+                return (
+                  <React.Fragment>
+                    {props.values.targets.map((t, index) => {
+                      if (t.deleted) {
+                        return null;
+                      }
+                      if (edit === false && t.is_excluded === true) {
+                        return null;
+                      }
+
+                      return (
+                        <div key={t.key}>
+                          <TargetBar
+                            key={t.symbol}
+                            target={t}
+                            edit={canEdit}
+                            setSymbol={symbol => {
+                              setSymbol(t, symbol);
+                              props.setFieldTouched(
+                                `targets.${index}.symbol` as 'targets',
                               );
                             }}
-                            readOnly={!canEdit}
-                          />
-                        </TargetBar>
-                      </div>
-                    );
-                  })}
-                  <div key="cashBar">
-                    <CashBar
-                      percentage={cashPercentage}
-                      actualPercentage={cashActualPercentage}
-                      edit={edit}
-                    />
-                  </div>
-                  {!canEdit && excludedAssetCount > 0 && (
-                    <ExcludedNote>
-                      And <strong>{excludedAssetCount}</strong> excluded asset
-                      {excludedAssetCount > 1 && 's'}.
-                    </ExcludedNote>
-                  )}
+                            onDelete={key => {
+                              let target = props.values.targets.find(
+                                t => t.key === key,
+                              );
+                              if (!target) {
+                                return;
+                              }
+                              target.deleted = true;
+                              props.setFieldTouched(
+                                `targets.${index}.percent` as 'targets',
+                              );
+                              props.setFieldValue(
+                                `targets.${index}.percent` as 'targets',
+                                -0.1,
+                              );
+                            }}
+                            onExclude={key => {
+                              let target = props.values.targets.find(
+                                t => t.key === key,
+                              );
+                              if (!target) {
+                                return;
+                              }
+                              const newExcluded = !target.is_excluded;
+                              target.is_excluded = newExcluded;
+                              props.setFieldTouched(
+                                `targets.${index}.percent` as 'targets',
+                              );
+                              props.setFieldValue(
+                                `targets.${index}.percent` as 'targets',
+                                0,
+                              );
+                            }}
+                          >
+                            <input
+                              type="number"
+                              name={`targets.${index}.percent`}
+                              value={props.values.targets[index].percent}
+                              tabIndex={index + 1}
+                              onChange={e =>
+                                props.setFieldValue(
+                                  `targets.${index}.percent` as 'targets',
+                                  parseFloat(e.target.value),
+                                )
+                              }
+                              onBlur={() => {
+                                props.setFieldValue(
+                                  `targets.${index}.percent` as 'targets',
+                                  parseFloat(
+                                    props.values.targets[index].percent.toFixed(
+                                      1,
+                                    ),
+                                  ),
+                                );
+                              }}
+                              readOnly={!canEdit}
+                            />
+                          </TargetBar>
+                        </div>
+                      );
+                    })}
+                    <div key="cashBar">
+                      <CashBar
+                        percentage={cashPercentage}
+                        actualPercentage={cashActualPercentage}
+                        edit={edit}
+                      />
+                    </div>
+                    {!canEdit && excludedAssetCount > 0 && (
+                      <ExcludedNote>
+                        And <strong>{excludedAssetCount}</strong> excluded asset
+                        {excludedAssetCount > 1 && 's'}.
+                      </ExcludedNote>
+                    )}
 
-                  <ErrorMessage name="targets" component="div" />
-                  {canEdit ? (
-                    <React.Fragment>
-                      <button
-                        type="button"
-                        onClick={() => arrayHelpers.push(generateNewTarget())}
-                      >
-                        Add
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (lockable) {
-                            resetTargets(props.resetForm);
-                          } else {
-                            let len = props.values.targets.length;
-                            for (let i = 0; i < len; i++) {
-                              props.values.targets.pop();
-                            }
-                            arrayHelpers.push(generateNewTarget());
-                          }
-                        }}
-                      >
-                        Reset
-                      </button>
-                      <Button
-                        type="submit"
-                        onClick={() => props.handleSubmit()}
-                        disabled={
-                          props.isSubmitting || !props.dirty || !props.isValid
-                        }
-                      >
-                        Save
-                      </Button>
-                      {lockable && (
+                    <ErrorMessage name="targets" component="div" />
+                    {canEdit ? (
+                      <React.Fragment>
+                        <button
+                          type="button"
+                          onClick={() => arrayHelpers.push(generateNewTarget())}
+                        >
+                          Add
+                        </button>
                         <button
                           type="button"
                           onClick={() => {
-                            props.handleReset();
-                            toggleEditMode();
+                            if (lockable) {
+                              resetTargets(props.resetForm);
+                            } else {
+                              let len = props.values.targets.length;
+                              for (let i = 0; i < len; i++) {
+                                props.values.targets.pop();
+                              }
+                              arrayHelpers.push(generateNewTarget());
+                            }
                           }}
                         >
-                          Cancel
+                          Reset
                         </button>
-                      )}
-                    </React.Fragment>
-                  ) : (
-                    <ButtonBox>
-                      <div>
-                        <Edit type="button" onClick={() => toggleEditMode()}>
-                          <FontAwesomeIcon icon={faLock} />
-                          Edit Targets
-                        </Edit>
-                      </div>
-                      <div>
-                        <AButton
-                          href={portfolioVisualizerURL}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button
+                          type="submit"
+                          onClick={() => props.handleSubmit()}
+                          disabled={
+                            props.isSubmitting || !props.dirty || !props.isValid
+                          }
                         >
-                          Portfolio Visualizer
-                        </AButton>
-                      </div>
-                    </ButtonBox>
-                  )}
-                </React.Fragment>
-              );
-            }}
-          />
-        </div>
-      )}
+                          Save
+                        </Button>
+                        {lockable && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              props.handleReset();
+                              toggleEditMode();
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ) : (
+                      <ButtonBox>
+                        <div>
+                          <Edit type="button" onClick={() => toggleEditMode()}>
+                            <FontAwesomeIcon icon={faLock} />
+                            Edit Targets
+                          </Edit>
+                        </div>
+                        <div>
+                          <AButton
+                            href={portfolioVisualizerURL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Portfolio Visualizer
+                          </AButton>
+                        </div>
+                      </ButtonBox>
+                    )}
+                  </React.Fragment>
+                );
+              }}
+            />
+          </div>
+        );
+      }}
     />
   );
 };
