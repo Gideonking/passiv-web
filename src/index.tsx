@@ -12,6 +12,7 @@ import createRunLoop from './reactors/init-runloop';
 import { effects } from './reactors/effects';
 import store, { history } from './store';
 import * as serviceWorker from './serviceWorker';
+import { initGA } from './common';
 
 if (
   process.env.REACT_APP_BASE_URL_OVERRIDE &&
@@ -26,21 +27,7 @@ if (
   });
 }
 
-// initialize GA and fire first pageview
-ReactGA.initialize(
-  [
-    {
-      trackingId:
-        process.env.NODE_ENV === 'production'
-          ? 'UA-113321962-1'
-          : 'UA-113321962-2',
-      gaOptions: {},
-    },
-  ],
-  {
-    debug: process.env.NODE_ENV === 'production' ? false : true,
-  },
-);
+initGA();
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 // get GA to listen for path changes

@@ -1,4 +1,5 @@
 import { Reducer } from 'redux';
+import { setUserIdGA, jwtDecode } from '../common';
 
 export type AuthState = {
   token: string | null;
@@ -24,6 +25,8 @@ const auth: Reducer<AuthState, AuthAction> = (
   action: AuthAction,
 ) => {
   if (action.type === 'LOGIN_SUCCEEDED') {
+    const rawToken = jwtDecode(action.payload.data.token);
+    setUserIdGA(String(rawToken.user_id));
     return {
       token: action.payload.data.token,
       error: null,
@@ -38,6 +41,7 @@ const auth: Reducer<AuthState, AuthAction> = (
   }
 
   if (action.type === 'LOGOUT') {
+    setUserIdGA();
     return {
       token: null,
       error: null,
@@ -45,6 +49,7 @@ const auth: Reducer<AuthState, AuthAction> = (
   }
 
   if (action.type === 'TOKEN_EXPIRED') {
+    setUserIdGA();
     return {
       ...state,
       token: null,

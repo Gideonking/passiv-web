@@ -5,9 +5,10 @@ import { AppState } from '../store';
 import { Currency } from '../types/currency';
 import { SimpleState } from '../types/common';
 
-// have to require this for Typescript to work properly.....
-// hopefully we can import this in the future
-var jwtDecode = require('jwt-decode');
+// // have to require this for Typescript to work properly.....
+// // hopefully we can import this in the future
+// var jwtDecode = require('jwt-decode');
+import { jwtDecode } from '../common';
 
 export const selectState = (state: AppState) => state;
 
