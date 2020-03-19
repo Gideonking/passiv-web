@@ -376,7 +376,7 @@ export const TargetSelector = ({ lockable, target }: Props) => {
                                 `targets.${index}.percent` as 'targets',
                                 parseFloat(
                                   props.values.targets[index].percent.toFixed(
-                                    1,
+                                    4,
                                   ),
                                 ),
                               );
