@@ -19,8 +19,6 @@ export const selectTotalEquityTimeframe = createSelector<
     return state.performanceAll?.data?.totalEquityTimeframe1Y;
   } else if (timeframe === 'YTD') {
     return state.performanceAll?.data?.totalEquityTimeframeYTD;
-  } else if (timeframe === '30D') {
-    return state.performanceAll?.data?.totalEquityTimeframe30D;
   } else {
     return state.performanceAll?.data?.totalEquityTimeframe1Y;
   }
@@ -36,10 +34,23 @@ export const selectContributionTimeframe = createSelector<
     return state.performanceAll?.data?.contributionTimeframe1Y;
   } else if (timeframe === 'YTD') {
     return state.performanceAll?.data?.contributionTimeframeYTD;
-  } else if (timeframe === '30D') {
-    return state.performanceAll?.data?.contributionTimeframe30D;
   } else {
     return state.performanceAll?.data?.contributionTimeframe1Y;
+  }
+});
+
+export const selectWithdrawalTimeframe = createSelector<
+  AppState,
+  AppState,
+  string,
+  PastValue[] | undefined
+>(selectState, selectSelectedTimeframe, (state, timeframe) => {
+  if (timeframe === '1Y') {
+    return state.performanceAll?.data?.withdrawalTimeframe1Y;
+  } else if (timeframe === 'YTD') {
+    return state.performanceAll?.data?.withdrawalTimeframeYTD;
+  } else {
+    return state.performanceAll?.data?.withdrawalTimeframe1Y;
   }
 });
 
@@ -53,8 +64,6 @@ export const selectContributions = createSelector<
     return state.performanceAll?.data?.contributions1Y;
   } else if (timeframe === 'YTD') {
     return state.performanceAll?.data?.contributionsYTD;
-  } else if (timeframe === '30D') {
-    return state.performanceAll?.data?.contributions30D;
   } else {
     return state.performanceAll?.data?.contributions1Y;
   }
@@ -67,11 +76,11 @@ export const selectContributionStreak = createSelector<
   number | undefined
 >(selectState, selectSelectedTimeframe, (state, timeframe) => {
   if (timeframe === '1Y') {
-    return state.performanceAll?.data?.contribution_streak1Y;
+    return state.performanceAll?.data?.contributionStreak1Y;
   } else if (timeframe === 'YTD') {
-    return state.performanceAll?.data?.contribution_streakYTD;
+    return state.performanceAll?.data?.contributionStreakYTD;
   } else {
-    return state.performanceAll?.data?.contribution_streak1Y;
+    return state.performanceAll?.data?.contributionStreak1Y;
   }
 });
 
@@ -82,11 +91,11 @@ export const selectContributionMonthsContributed = createSelector<
   number | undefined
 >(selectState, selectSelectedTimeframe, (state, timeframe) => {
   if (timeframe === '1Y') {
-    return state.performanceAll?.data?.contribution_months_contributed1Y;
+    return state.performanceAll?.data?.contributionMonthsContributed1Y;
   } else if (timeframe === 'YTD') {
-    return state.performanceAll?.data?.contribution_months_contributedYTD;
+    return state.performanceAll?.data?.contributionMonthsContributedYTD;
   } else {
-    return state.performanceAll?.data?.contribution_months_contributed1Y;
+    return state.performanceAll?.data?.contributionMonthsContributed1Y;
   }
 });
 
@@ -97,10 +106,10 @@ export const selectContributionMonthsTotal = createSelector<
   number | undefined
 >(selectState, selectSelectedTimeframe, (state, timeframe) => {
   if (timeframe === '1Y') {
-    return state.performanceAll?.data?.contribution_total_months1Y;
+    return state.performanceAll?.data?.contributionTotalMonths1Y;
   } else if (timeframe === 'YTD') {
-    return state.performanceAll?.data?.contribution_total_monthsYTD;
+    return state.performanceAll?.data?.contributionTotalMonthsYTD;
   } else {
-    return state.performanceAll?.data?.contribution_total_months1Y;
+    return state.performanceAll?.data?.contributionTotalMonths1Y;
   }
 });
