@@ -12,6 +12,7 @@ import PerformanceMonthlyDividends from './PerformanceMonthlyDividends';
 import PerformanceDividendTimelineChart from './PerformanceDividendTimelineChart';
 import PerformanceDividendIncome from './PerformanceDividendIncome';
 import AccountsSelect from './AccountsSelect';
+import ExcludeAssetsToggle from './ExcludeAssetsToggle';
 import { setSelectedTimeframe } from '../../actions/performance';
 import { selectSelectedTimeframe } from '../../selectors/performance';
 import ShadowBox from '../../styled/ShadowBox';
@@ -185,6 +186,7 @@ export const Performance = () => {
             setTimeframe={t => dispatch(setSelectedTimeframe(t))}
           />
         </TimeContainer>
+        <ExcludeAssetsToggle />
         <AccountsSelect />
       </Flex>
       <Grid>
