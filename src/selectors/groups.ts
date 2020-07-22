@@ -116,7 +116,7 @@ export const selectGroupsNeedData = createSelector<
       return false;
     }
     return shouldUpdate(rawGroups, {
-      staleTime: ms.minutes(10),
+      staleTime: ms.minutes(1),
       now: time,
     });
   },

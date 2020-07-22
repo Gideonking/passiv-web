@@ -19,6 +19,8 @@ export const selectToken = (state: AppState) => state.auth.token;
 
 export const selectReferral = (state: AppState) => state.referral;
 
+export const selectVersion = (state: AppState) => state.version;
+
 export const selectReferralCode = createSelector(selectReferral, referral => {
   if (referral !== null) {
     return referral.referralCode;
@@ -38,6 +40,13 @@ export const selectTokenMinutesRemaining = createSelector(
     return (expiry - now) / (1000 * 60);
   },
 );
+
+export const selectAppNeedsRefresh = createSelector(selectVersion, version => {
+  if (version) {
+    return version.needsRefresh;
+  }
+  return false;
+});
 
 export const selectTokenIsExpired = createSelector(
   selectToken,

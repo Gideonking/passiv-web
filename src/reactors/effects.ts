@@ -10,6 +10,7 @@ import {
   loadPlans,
   loadHelpArticles,
   loadFeatures,
+  reloadEverything,
 } from '../actions';
 import {
   loadPerformanceAll,
@@ -25,6 +26,7 @@ import {
   selectPlansNeedData,
   selectHelpArticlesNeedData,
   selectFeaturesNeedData,
+  selectAppNeedsRefresh,
 } from '../selectors';
 import { selectAccountsNeedData } from '../selectors/accounts';
 import { selectGroupsNeedData } from '../selectors/groups';
@@ -38,6 +40,10 @@ import {
 export { default as reducer } from '../reducers';
 
 export const effects = [
+  {
+    selector: selectAppNeedsRefresh,
+    actionCreator: reloadEverything,
+  },
   {
     selector: selectCurrenciesNeedData,
     actionCreator: loadCurrencies,

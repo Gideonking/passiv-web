@@ -2,6 +2,7 @@ import { getData, postData } from '../api';
 import { ActionCreator, Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { setSelectedTimeframe, loadPerformanceAll } from './performance';
+import { setRefreshDone } from './version';
 
 export const loginSucceeded: ActionCreator<Action> = payload => ({
   type: 'LOGIN_SUCCEEDED',
@@ -374,6 +375,10 @@ export const reloadEverything: ActionCreator<ThunkAction<
 
     dispatch(setSelectedTimeframe('1Y'));
     dispatch(loadPerformanceAll(selectedAccounts));
+
+    setTimeout(() => {
+      dispatch(setRefreshDone());
+    }, 1000);
   };
 };
 
