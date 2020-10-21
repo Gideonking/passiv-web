@@ -71,7 +71,7 @@ export default (history: any) =>
       baseType: 'FETCH_INCENTIVES',
       userData: true,
     }),
-    model_asset_classes: simple<ModelAssetClassDetails>({
+    model_asset_classes: simple<ModelAssetClassDetails[]>({
       baseType: 'FETCH_MODEL_ASSET_CLASS',
       userData: true,
     }),
