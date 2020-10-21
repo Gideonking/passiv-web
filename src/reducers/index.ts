@@ -16,6 +16,7 @@ import { GroupData } from '../types/group';
 import { Currency } from '../types/currency';
 import { Feature } from '../types/feature';
 import { Incentives } from '../types/incentives';
+import { ModelAssetClassDetails } from '../types/modelAssetClass';
 import { CurrencyRate } from '../types/currencyRate';
 import { Account } from '../types/account';
 import { Authorization } from '../types/authorization';
@@ -68,6 +69,10 @@ export default (history: any) =>
     }),
     incentives: simple<Incentives>({
       baseType: 'FETCH_INCENTIVES',
+      userData: true,
+    }),
+    model_asset_classes: simple<ModelAssetClassDetails>({
+      baseType: 'FETCH_MODEL_ASSET_CLASS',
       userData: true,
     }),
     currencies: simple<Currency[]>({
