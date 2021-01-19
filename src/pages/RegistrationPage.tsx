@@ -67,12 +67,12 @@ const RegistrationPage = ({ location }: Props) => {
               password: values.password,
               referralCode: values.referralCode,
             })
-              .then(response => {
+              .then((response) => {
                 // login
                 actions.setSubmitting(false);
                 dispatch(loginSucceeded(response));
               })
-              .catch(error => {
+              .catch((error) => {
                 let errors: any = {};
                 if (error.response.data.errors.password) {
                   errors.password = error.response.data.errors.password.join(

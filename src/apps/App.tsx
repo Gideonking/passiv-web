@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import qs from 'qs';
 import { StripeProvider } from 'react-stripe-elements';
 import '@reach/menu-button/styles.css';
+import '@reach/dialog/styles.css';
 import { selectLoggedIn, selectReferralCode } from '../selectors';
 import {
   selectShowInsecureApp,
@@ -115,6 +116,31 @@ const UpgradePage = React.lazy(() =>
 );
 const PerformancePage = React.lazy(() =>
   import(/* webpackChunkName: "performance" */ '../pages/PerformancePage'),
+);
+
+const ModelAssetClassPage = React.lazy(() =>
+  //? webpackChunkName
+  import(/* webpackChunkName: "...?" */ '../pages/ModelAssetClassPage'),
+);
+
+const ModelPortfolioPage = React.lazy(() =>
+  //? webpackChunkName
+  import(/* webpackChunkName: "...?" */ '../pages/ModelPortfolioPage'),
+);
+
+const SettingTargetsPage = React.lazy(() =>
+  //? webpackChunkName
+  import(/* webpackChunkName: "...?" */ '../pages/SettingTargetsPage'),
+);
+
+const MyModelPortfoliosPage = React.lazy(() =>
+  //? webpackChunkName
+  import(/* webpackChunkName: "...?" */ '../pages/MyModelPortfoliosPage'),
+);
+
+const ApplyTargetPage = React.lazy(() =>
+  //? webpackChunkName
+  import(/* webpackChunkName: "...?" */ '../pages/ApplyTargetPage'),
 );
 
 // declare global {
@@ -422,6 +448,36 @@ const App = () => {
             )}
             {showSecureApp && (
               <Route path={prefixPath('/share')} component={SharePage} />
+            )}
+            {showSecureApp && (
+              <Route
+                path={prefixPath('/asset-class')}
+                component={ModelAssetClassPage}
+              />
+            )}
+            {showSecureApp && (
+              <Route
+                path={prefixPath('/model-portfolio/:modelId')}
+                component={ModelPortfolioPage}
+              />
+            )}
+            {showSecureApp && (
+              <Route
+                path={prefixPath('/setting-targets/:groupId')}
+                component={ApplyTargetPage}
+              />
+            )}
+            {showSecureApp && (
+              <Route
+                path={prefixPath('/setting-targets')}
+                component={SettingTargetsPage}
+              />
+            )}
+            {showSecureApp && (
+              <Route
+                path={prefixPath('/my-model-portfolios')}
+                component={MyModelPortfoliosPage}
+              />
             )}
             // insecure app
             {showInsecureApp && (

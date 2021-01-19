@@ -123,7 +123,7 @@ export const AccountHoldings = ({ holdings }: Props) => {
 
   const getCurrencyById = (currencyId: string) => {
     return (
-      currencies && currencies.find(currency => currencyId === currency.id)
+      currencies && currencies.find((currency) => currencyId === currency.id)
     );
   };
 

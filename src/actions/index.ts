@@ -14,6 +14,7 @@ import {
 } from '../components/Performance/DatePickers';
 import { checkIfOnline } from './online';
 import { loadGoals } from './goals';
+import { ModelPortfolioDetailsType } from '../types/modelPortfolio';
 
 export const loginSucceeded: ActionCreator<Action> = (payload) => ({
   type: 'LOGIN_SUCCEEDED',
@@ -342,6 +343,51 @@ export const loadGroupAndAccounts: ActionCreator<ThunkAction<
   };
 };
 
+export const loadModelAssetClasses: ActionCreator<ThunkAction<
+  void,
+  any,
+  any,
+  Action<any>
+>> = () => {
+  return (dispatch) => {
+    dispatch(fetchAssetClassesStart());
+    getData('/api/v1/modelAssetClass/')
+      .then((response) => {
+        dispatch(fetchAssetClassesSuccess(response));
+      })
+      .catch((error) => {
+        dispatch(fetchAssetClassesError(error));
+      });
+  };
+};
+
+export const loadModelPortfolios: ActionCreator<ThunkAction<
+  void,
+  any,
+  any,
+  Action<any>
+>> = () => {
+  return (dispatch) => {
+    dispatch(fetchModelPortfoliosStart());
+    getData('/api/v1/modelPortfolio/')
+      .then((response) => {
+        response.data.forEach((model: ModelPortfolioDetailsType) => {
+          const modelId = model.model_portfolio.id;
+          dispatch(fetchModelPortfolioStart(modelId));
+          getData(`/api/v1/modelPortfolio/${modelId}`)
+            .then((res) => {
+              dispatch(fetchModelPortfolioSuccess(res, modelId));
+            })
+            .catch((err) => dispatch(fetchModelPortfolioError(err, modelId)));
+        });
+        dispatch(fetchModelPortfoliosSuccess(response));
+      })
+      .catch((error) => {
+        dispatch(fetchModelPortfoliosError(error));
+      });
+  };
+};
+
 export const reloadEverything: ActionCreator<ThunkAction<
   void,
   any,
@@ -427,6 +473,24 @@ export const reloadEverything: ActionCreator<ThunkAction<
         return dispatch(fetchAccountsSuccess(response));
       })
       .catch((error) => dispatch(fetchAccountsError(error)));
+
+    dispatch(fetchAssetClassesStart());
+    getData('/api/v1/modelAssetClass/')
+      .then((response) => {
+        dispatch(fetchAssetClassesSuccess(response));
+      })
+      .catch((error) => {
+        dispatch(fetchAssetClassesError(error));
+      });
+
+    dispatch(fetchModelPortfoliosStart());
+    getData('/api/v1/modelPortfolio')
+      .then((response) => {
+        dispatch(fetchModelPortfoliosSuccess(response));
+      })
+      .catch((error) => {
+        dispatch(fetchModelPortfoliosError(error));
+      });
 
     dispatch(setSelectedTimeframe('1Y'));
     dispatch(loadPerformanceAll(selectedAccounts));
@@ -696,6 +760,53 @@ export const importTargetStart: ActionCreator<Action> = (payload) => ({
 export const importTargetSuccess: ActionCreator<Action> = (payload) => ({
   type: 'IMPORT_TARGET_SUCCESS',
   payload,
+});
+
+export const fetchAssetClassesStart: ActionCreator<Action> = () => ({
+  type: 'FETCH_MODEL_ASSET_CLASSES_START',
+});
+export const fetchAssetClassesSuccess: ActionCreator<Action> = (payload) => {
+  return {
+    type: 'FETCH_MODEL_ASSET_CLASSES_SUCCESS',
+    payload,
+  };
+};
+export const fetchAssetClassesError: ActionCreator<Action> = (payload) => ({
+  type: 'FETCH_MODEL_ASSET_CLASSES_ERROR',
+  data: payload,
+});
+
+export const fetchModelPortfolioStart: ActionCreator<Action> = (id) => ({
+  type: 'FETCH_MODEL_PORTFOLIO_START',
+  id,
+});
+
+export const fetchModelPortfolioSuccess: ActionCreator<Action> = (
+  payload,
+  id,
+) => ({ type: 'FETCH_MODEL_PORTFOLIO_SUCCESS', payload, id });
+
+export const fetchModelPortfolioError: ActionCreator<Action> = (
+  payload,
+  id,
+) => ({
+  type: 'FETCH_MODEL_PORTFOLIO_ERROR',
+  payload,
+});
+
+export const fetchModelPortfoliosStart: ActionCreator<Action> = () => ({
+  type: 'FETCH_MODEL_PORTFOLIOS_START',
+});
+
+export const fetchModelPortfoliosSuccess: ActionCreator<Action> = (payload) => {
+  return {
+    type: 'FETCH_MODEL_PORTFOLIOS_SUCCESS',
+    payload,
+  };
+};
+export const fetchModelPortfoliosError: ActionCreator<Action> = (payload) => ({
+  type: 'FETCH_MODEL_PORTFOLIOS_ERROR',
+  data: payload,
 });
 
 export const importTargetError: ActionCreator<Action> = (payload) => ({

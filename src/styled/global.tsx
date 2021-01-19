@@ -209,7 +209,7 @@ export const GlobalStyle = () => (
         --lg: 992px;
         --xl: 1200px;
 
-        --box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        --box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
       }
 
       /* Global Structure */
@@ -278,6 +278,18 @@ export const GlobalStyle = () => (
         outline: 0;
       }
 
+<<<<<<< HEAD
+      [data-reach-dialog-content] {
+        border-radius: 5px;
+        @media (max-width: 500px) {
+          margin-top: 150px;
+          width: 250px;
+        }
+      }
+      [data-reach-dialog-overlay] {
+        z-index: 4;
+      }
+=======
       [data-reach-dialog-overlay] {
         z-index: 4;
       }
@@ -286,6 +298,7 @@ export const GlobalStyle = () => (
           width: 95vw;
         }
       }
+>>>>>>> integrations
     `}
   />
 );

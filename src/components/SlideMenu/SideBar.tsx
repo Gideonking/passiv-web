@@ -135,13 +135,14 @@ const SideBar = () => {
           />
           {group.hasAccounts &&
             group.accounts.map((account) => (
-              <SideBarLink
-                key={account.id}
-                name={account.name}
-                linkPath={`/app/group/${group.id}/account/${account.id}`}
-                hideArrow={true}
-                indent={true}
-              />
+              <div key={account.id}>
+                <SideBarLink
+                  name={account.name}
+                  linkPath={`/app/group/${group.id}/account/${account.id}`}
+                  hideArrow={true}
+                  indent={true}
+                />
+              </div>
             ))}
         </React.Fragment>
       );
@@ -156,6 +157,11 @@ const SideBar = () => {
           {groups && groups.length > 0 && (
             <GroupContainer>{groupList}</GroupContainer>
           )}
+          <SideBarLink
+            name="My Models"
+            linkPath={`/app/my-model-portfolios`}
+            beta={true}
+          />
           {performancePageFeatureActive && hasQuestradeConnection && (
             <SideBarLink name="Reporting" linkPath="/app/reporting" />
           )}
