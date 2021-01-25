@@ -39,4 +39,10 @@ Here I will breakdown the test folders and the caveats for each.
     --> Testing Bench:
             These are tests using different features or new features in Cypress. It also includes deprecated and legacy tests in case I need to reference something. Eseentially an archive
 
-Last updated Dec 4th, 2020 by Alex Sutherland 
+Last updated Jan 19th, 2021 by Alex Sutherland
+
+Path extensions for stubbing for the info, balances and positions json
+https://api.passiv.com/api/v1/portfolioGroups/e0430f9b-54d8-4263-b45d-3ee33bb997c6/info/
+https://api.passiv.com/api/v1/accounts/6ce8a0e1-17e2-4435-82ea-a30f74a79f3c/balances/
+https://api.passiv.com/api/v1/accounts/6ce8a0e1-17e2-4435-82ea-a30f74a79f3c/positions/
+
