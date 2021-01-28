@@ -11,6 +11,7 @@ import online from './online';
 import version from './version';
 import referral from './referral';
 import tracking from './tracking';
+import { localReducer, localPersistConfig } from './local';
 import { SubscriptionData } from '../types/subscription';
 import { GroupInfoData, Balance } from '../types/groupInfo';
 import { GroupData } from '../types/group';
@@ -35,10 +36,12 @@ import {
   reportingEndDate,
 } from './performance';
 import { Goal } from '../types/goals';
+import { persistReducer } from 'redux-persist';
 
 export default (history: any) =>
   combineReducers({
     router: connectRouter(history),
+    local: persistReducer(localPersistConfig, localReducer),
     appTime: Date.now,
     auth,
     browser: responsiveStateReducer,

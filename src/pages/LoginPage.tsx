@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { loginSucceeded } from '../actions';
+import { loginSucceeded, deviceRemembered } from '../actions';
 import { postData, putData } from '../api';
 import LoginLinks from '../components/LoginLinks';
 import { Form, Input, Label } from '../styled/Form';
@@ -95,10 +95,12 @@ const LoginPage = () => {
           putData('/api/v1/auth/login/', {
             token: values.token,
             state: stateMFA && stateMFA.state,
+            remember_device: true,
           })
             .then((response) => {
               actions.setSubmitting(false);
               dispatch(loginSucceeded(response));
+              dispatch(deviceRemembered(response));
             })
             .catch((error) => {
               actions.setErrors({

@@ -20,6 +20,14 @@ export const loginSucceeded: ActionCreator<Action> = (payload) => ({
   payload,
 });
 
+export const deviceRemembered: ActionCreator<Action> = (payload) => {
+  console.log('inside the deviceRemembered action', payload);
+  return {
+    type: 'SET_DEVICE',
+    payload,
+  };
+};
+
 export const logout: ActionCreator<Action> = () => ({
   type: 'LOGOUT',
 });

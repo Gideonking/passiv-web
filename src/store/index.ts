@@ -16,7 +16,14 @@ const defaultState = {};
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  blacklist: ['appTime', 'router', 'browser', 'updateServiceWorker', 'online'],
+  blacklist: [
+    'appTime',
+    'router',
+    'browser',
+    'updateServiceWorker',
+    'online',
+    'local',
+  ],
 };
 
 // create our root reducer
