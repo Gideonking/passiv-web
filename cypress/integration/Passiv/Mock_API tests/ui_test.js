@@ -14,6 +14,11 @@ describe('Login using created data from registration', () => {
 
       cy.intercept('GET', '/help', { fixture: 'api_v1.json' })
       .as('API poke')
+
+      cy.intercept('POST','/api/v1/settings/', (req) => { req.reply((res) => { res.send({ fixture: '/login_stubs/settings.json' })
+    })
+  })
+    .as('Settings')
     
 
 

@@ -135,10 +135,7 @@ describe('Login individual component test', () => {
 
     })
 
-
-describe('Conditional Login Test', () => {
-
-    it('User will log in and continue; non user registers new account', () => {
+    it('Login Test 1', () => {
         // redirect for any other domains
         
         cy.fixture('testDomain').as('login')
@@ -150,29 +147,14 @@ describe('Conditional Login Test', () => {
         cy.get('[placeholder=Password]').type(user.password)
         })
 
-    cy.get('[data-cy=login-button]').then(($button) => {
-        if (cy.get($button).click().should('be.disabled') ){
-            cy.fixture('testDomain').as('server')
-            cy.get('@server').then(domain => {
-            cy.get('div').contains('Sign Up').click()})
-            cy.fixture('credentials').as('userFixture')
-                cy.get('@userFixture').then(user => {
-                cy.get('[name=name').type('Al')
-                cy.get('[name=email]').first().type(user.username)
-                cy.get('[placeholder=Password]').type(user.password)})
+    cy.get('[data-cy=login-button]').click()
+    
+    cy.get('[data-cy=logout-button]').click()
 
-    } else {
+    })
 
-        cy.fixture('testDomain').as('login')
-        cy.get('@login').then(domain => {
-        cy.visit((domain.test).concat('/register')) })
-        cy.fixture('credentials').as('userFixture')
-        cy.get('@userFixture').then(user => {
-        cy.get('[name=email]').type(user.username)
-        cy.get('[placeholder=Password]').type(user.password)})
 
-    }
-})
+// You will have to adjust this in order to make it meet your portfolio, it adjusts based on number of assets 
 
 describe('Login and Adjust portfolio', () => {
 
@@ -223,6 +205,8 @@ describe('Login and Adjust portfolio', () => {
 
 })
 
+
+// You will have to adjust this in order to make it meet your portfolio, it adjusts based on number of assets 
 describe('Reset and build portfolio manually', () => { 
     it('Reset', () => {
         cy.contains('Individual TFSA').click()  
@@ -277,6 +261,7 @@ describe('Reset and build portfolio manually', () => {
 
 })
 
+describe('Add goals', () => { 
     it('Goals Test', () => {
             cy.contains('Goals').click()
             .should('have.attr', 'href', '/app/goals')
@@ -475,5 +460,26 @@ describe('Reset and build portfolio manually', () => {
     })
 
 })
+
+
+describe('Reset and build portfolio manually', () => { 
+    it('Change name', () => {
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Edit').first().click()
+        cy.get('input').clear().type('tesla').type('{enter}')
+    })
+  
+
+    it('Change email', () => {
+        cy.find('button').contains('Edit').first().next().click()
+        cy.get('input').contains('[placeholder=Your email]').type('asutherland8219@hotmail.com').enter()
+        
+    })
+
+    it('Change email back', () => {
+        cy.find('button').contains('Edit').first().next().click()
+        cy.get('input').contains('[placeholder=Your email]').type('asutherland8219@gmail.com').enter()
+        
+    })
 
 })

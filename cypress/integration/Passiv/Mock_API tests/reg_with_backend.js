@@ -1,17 +1,18 @@
 
 describe('Database test', () => {
         it('Data is stored in correct format in JSON file', () => {
+            cy.intercept('GET', '/api/v1', { fixture: 'api_v1.json' })
+            .as('API poke')
+
     
             cy.fixture('testDomain').as('login')
             cy.get('@login').then(domain => {
-            cy.visit((domain.test).concat('/login')) })
+            cy.visit((domain.test).concat('/app/register')) })
 
     // the variable for the info that will be stored in the JSON db
     let body 
 
-        cy.intercept('GET', '/api/v1', { fixture: 'api_v1.json' })
-            .as('API poke')
-
+       
     
 
         cy.intercept('POST', '/api/v1/auth/register/', req => {
