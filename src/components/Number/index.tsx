@@ -61,10 +61,22 @@ const Number = (props: Props) => {
     numberProps.currencyDisplay = isAppleDevice ? 'symbol' : 'narrowSymbol';
     numberProps.currency = props.currency;
   }
+  let renderedNumber = null;
+  try {
+    renderedNumber = new Intl.NumberFormat(language, numberProps).format(
+      props.value,
+    );
+  } catch (e) {
+    numberProps.currencyDisplay = 'symbol';
+    renderedNumber = new Intl.NumberFormat(language, numberProps).format(
+      props.value,
+    );
+  }
+
   return (
     <React.Fragment>
       {prefix}
-      {new Intl.NumberFormat(language, numberProps).format(props.value)}
+      {renderedNumber}
       {postfix}
     </React.Fragment>
   );
