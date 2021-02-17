@@ -50,7 +50,7 @@ describe('Login individual component test', () => {
         
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
         cy.get('[name=email]').type(user.username)
         })
@@ -66,7 +66,7 @@ describe('Login individual component test', () => {
         cy.fixture('testDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
         cy.get('[placeholder=Password]').type(user.password)
         })
@@ -82,7 +82,7 @@ describe('Login individual component test', () => {
         cy.fixture('testDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
         cy.get('[name=email]').type(user.username)
         cy.get('[placeholder=Password]').type('5browed8')
@@ -123,7 +123,7 @@ describe('Login individual component test', () => {
         cy.fixture('testDomain').as('server')
         cy.get('@server').then(domain => {
         cy.visit((domain.test).concat('/help')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
             cy.get('[name=le]').first().type(user.username)
             cy.get('[name=lm]').first().type("test")
@@ -141,7 +141,7 @@ describe('Login individual component test', () => {
         cy.fixture('testDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
         cy.get('[name=email]').type(user.username)
         cy.get('[placeholder=Password]').type(user.password)
@@ -163,7 +163,7 @@ describe('Login and Adjust portfolio', () => {
         cy.fixture('testDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
-        cy.fixture('credentials').as('userFixture')
+        cy.fixture('my_credentials').as('userFixture')
         cy.get('@userFixture').then(user => {
         cy.get('[name=email]').first().type(user.username)
         cy.get('[placeholder=Password]').type(user.password)
