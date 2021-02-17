@@ -469,17 +469,4 @@ describe('Reset and build portfolio manually', () => {
         cy.get('input').clear().type('tesla').type('{enter}')
     })
   
-
-    it('Change email', () => {
-        cy.find('button').contains('Edit').first().next().click()
-        cy.get('input').contains('[placeholder=Your email]').type('asutherland8219@hotmail.com').enter()
-        
-    })
-
-    it('Change email back', () => {
-        cy.find('button').contains('Edit').first().next().click()
-        cy.get('input').contains('[placeholder=Your email]').type('asutherland8219@gmail.com').enter()
-        
-    })
-
 })

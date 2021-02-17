@@ -12,6 +12,16 @@ IMPORTANT READ HERE FOR USABILITY
          is where you put in credentials to test the app. Each test calls the credentials from this file so you only have to edit them in one location! Some tests, such as deployment suite are more particularly tailored to my credentials specifically.
         This is because some of the elements (ie. Selecting the assets when editing portfolio are variable for each user.
 
+        When you are using credentials:
+
+        - Duplicate the file "credentials"
+
+        - Rename credentials as "my_credentials"
+
+        - Add to the gitignore
+
+        This will allow you to add whatever credentials you want to use and it wont be uploaded to github.
+
 - testdomain: 
         This is where you modify which domain the tests take place, again, each should be directed to this domain automatically. Typically they would be localhost, app.passiv.com/app, beta.getpassiv.com/app
         **** DONT ADD THE SUFFIX TO THE END FOR SPECIFIC PAGES, EACH TEST CONCATENATES IT AUTOMATICALLY ****
