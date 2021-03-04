@@ -1,8 +1,12 @@
 // Sidebar_test_live
 describe('Sidebar individual component test', () => {
 
+    beforeEach(() => {
+        cy.intercept('Post','/api/v1/ping/', {fixture: 'ping.json'})
+    })
+
     it('Collapse button works', () => {
-        cy.fixture('testDomain').as('server')
+        cy.fixture('betatestDomain').as('server')
         cy.get('@server').then(domain => {
         cy.visit(domain.test) })
     cy.contains('Collapse').click()
@@ -46,7 +50,7 @@ describe('Sidebar individual component test', () => {
     // Login validity test
 describe('Login individual component test', () => { 
     it('accepts input email', () => { 
-        cy.fixture('testDomain').as('login')
+        cy.fixture('betatestDomain').as('login')
         
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
@@ -63,7 +67,7 @@ describe('Login individual component test', () => {
 
     // Verify the sign in button is disabled without email //
     it('accepts input password', () => {
-        cy.fixture('testDomain').as('login')
+        cy.fixture('betatestDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
         cy.fixture('my_credentials').as('userFixture')
@@ -79,7 +83,7 @@ describe('Login individual component test', () => {
 
     // Verify the error prompt works
     it('Error Prompt', () => {
-        cy.fixture('testDomain').as('login')
+        cy.fixture('betatestDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
         cy.fixture('my_credentials').as('userFixture')
@@ -101,7 +105,7 @@ describe('Login individual component test', () => {
             body: 'it worked!'
         }).as('Reset')
         cy.intercept('https://app.passiv.com/app/reset-password').as('redirect')
-        cy.fixture('testDomain').as('server')
+        cy.fixture('betatestDomain').as('server')
         cy.get('@server').then(domain => {
         cy.visit((domain.test).concat('/reset-password')) })
         cy.get('input').click({multiple:true}).type('asutherland8219@gmail.com')
@@ -120,7 +124,7 @@ describe('Login individual component test', () => {
             statusCode: 200,
             body: 'it worked!'
         }).as('email')
-        cy.fixture('testDomain').as('server')
+        cy.fixture('betatestDomain').as('server')
         cy.get('@server').then(domain => {
         cy.visit((domain.test).concat('/help')) })
         cy.fixture('my_credentials').as('userFixture')
@@ -128,129 +132,100 @@ describe('Login individual component test', () => {
             cy.get('[name=le]').first().type(user.username)
             cy.get('[name=lm]').first().type("test")
         cy.get('button').contains('Submit').click()
-        cy.wait('@email')
+      
         
     
         })
 
     })
 
-    describe('Test Brokerage Auth Connections', () => { 
-        beforeEach(() => {
-      
-          cy.intercept('/api/v1/brokerages/**', (req) => {
-            req.reply({fixture: 'login_stubs/brokerages.json'})
-          }).as('connect')
-        
-        })
-       
-      
-        it('Login test', () => {
-          cy.fixture('testDomain').as('login')
-          cy.get('@login').then(domain => {
-          cy.visit((domain.test).concat('/login')) })
-          cy.fixture('my_credentials').as('userFixture')
-          cy.get('@userFixture').then(user => {
-          cy.get('[name=email]').first().type(user.username)
-          cy.get('[placeholder=Password]').type(user.password)
-      
-          })
-      
-      // Verify the sign in button is enabled//
-        cy.get('[data-cy=login-button]').should('not.be.disabled')
-      .click({multiple:true})
-      
-        })
-      
-        it('Add Alpaca', () => {
-      
-          cy.intercept('/api/v1/brokerages/**', (req) => {
-            req.reply({fixture: 'login_stubs/brokerages.json'})
-          }).as('connect')
-      
-          cy.fixture('testDomain').as('login')
-            cy.get('@login').then(domain => {
-            cy.visit((domain.test).concat('/login')) })
-            cy.fixture('my_credentials').as('userFixture')
-            cy.get('@userFixture').then(user => {
-            cy.get('[name=email]').first().type(user.username)
-            cy.get('[placeholder=Password]').type(user.password)
-        
-            })
-        
-        // Verify the sign in button is enabled//
-          cy.get('[data-cy=login-button]').should('not.be.disabled')
-        .click({multiple:true})
-            
-            cy.get('div').contains('Settings').click().wait(8000)
-            cy.get('button').contains('Add').first().click().wait(5000)
-            cy.get('div').contains('Alpaca').click()
-      
-      
-            cy.wait('@connect')
-            .its('response.statusCode').should('eq', 200)
-        })
-      
-        it('Add Wealthica', () => {
-          cy.get('div').contains('Settings').click().wait(8000)
-          cy.get('button').contains('Add').first().click().wait(5000)
-          cy.get('div').contains('Wealthica').click()
-          cy.get('button').contains('Connect').click()
-      
-          cy.wait('@connect')
-          .its('response.statusCode').should('eq', 200)
-      
-       })
-      
-        it('Add Questrade', () => {
-        
-            cy.get('div').contains('Settings').click().wait(8000)
-            cy.get('button').contains('Add').first().click().wait(5000)
-            cy.get('div').contains('Questrade').click()
-      
-            cy.wait('@connect')
-            .its('response.statusCode').should('eq', 200)
-      
-          })
-      
-        it('Add IBKR', () => {
-      
-            cy.get('div').contains('Settings').click().wait(8000)
-            cy.get('button').contains('Add').first().click().wait(5000)
-            cy.get('div').contains('IBKR').click()
-      
-            cy.wait('@connect')
-            .its('response.statusCode').should('eq', 200)
-      
-          })
-      
-        it('Add Tradier', () => {
-            cy.get('div').contains('Settings').click().wait(8000)
-            cy.get('button').contains('Add').first().click().wait(5000)
-            cy.get('div').contains('Tradier').click()
-      
-            cy.wait('@connect')
-            .its('response.statusCode').should('eq', 200)
-      
-          })
-      
-        it('Add TD Ameritrade', () => {
-            cy.get('div').contains('Settings').click().wait(8000)
-            cy.get('button').contains('Add').first().click().wait(5000)
-            cy.get('div').contains('TD Ameritrade').click()
-      
-            cy.wait('@connect')
-            .its('response.statusCode').should('eq', 200)
-      
-          })
+// start here tomorrow
 
-        it('Logout', () => {
-            cy.get('nav').find('button').contains('Logout').click().wait(5000)
+describe('Test Brokerage Auth Connections', () => { 
+    beforeEach(() => {
+  
+      cy.intercept('/api/v1/brokerages/**', (req) => {
+        req.reply({fixture: 'login_stubs/brokerages.json'})
+      }).as('connect')
+    
+    })
+   
+  
+    it('Login test', () => {
+      cy.fixture('betatestDomain').as('login')
+      cy.get('@login').then(domain => {
+      cy.visit((domain.test).concat('/login')) })
+      cy.fixture('my_credentials').as('userFixture')
+      cy.get('@userFixture').then(user => {
+      cy.get('[name=email]').first().type(user.username)
+      cy.get('[placeholder=Password]').type(user.password)
+  
+      })
+  
+  // Verify the sign in button is enabled//
+    cy.get('[data-cy=login-button]').should('not.be.disabled')
+  .click({multiple:true})
+  
+    })
+  
+    it('Add Alpaca', () => {
+  
+      cy.fixture('betatestDomain').as('login')
+        cy.get('@login').then(domain => {
+        cy.visit((domain.test).concat('/login')) })
+        cy.fixture('my_credentials').as('userFixture')
+        cy.get('@userFixture').then(user => {
+        cy.get('[name=email]').first().type(user.username)
+        cy.get('[placeholder=Password]').type(user.password)
+    
+        })
+    
+    // Verify the sign in button is enabled//
+      cy.get('[data-cy=login-button]').should('not.be.disabled')
+    .click({multiple:true})
         
-        })
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click().wait(5000)
+        cy.get('div').contains('Alpaca').click()
       
-        })
-      
+    })
+  
+    it('Add Wealthica', () => {
+      cy.get('div').contains('Settings').click().wait(8000)
+      cy.get('button').contains('Add').first().click().wait(5000)
+      cy.get('div').contains('Wealthica').click()
+      cy.get('button').contains('Connect').click()
+   })
+  
+    it('Add Questrade', () => {
+    
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click().wait(5000)
+        cy.get('div').contains('Questrade').click()
+  
+      })
+  
+    it('Add IBKR', () => {
+  
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click().wait(5000)
+        cy.get('div').contains('IBKR').click()
+      })
+  
+    it('Add Tradier', () => {
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click().wait(5000)
+        cy.get('div').contains('Tradier').click()
+      })
+  
+    it('Add TD Ameritrade', () => {
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click().wait(5000)
+        cy.get('div').contains('TD Ameritrade').click()
+      })
+  
+    })
+  
 
 // You will have to adjust this in order to make it meet your portfolio, it adjusts based on number of assets 
 
@@ -258,7 +233,7 @@ describe('Login and Adjust portfolio', () => {
 
     // Re-login
     it('Login test 2', () => {
-        cy.fixture('testDomain').as('login')
+        cy.fixture('betatestDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit((domain.test).concat('/login')) })
         cy.fixture('my_credentials').as('userFixture')
@@ -281,20 +256,20 @@ describe('Login and Adjust portfolio', () => {
     cy.contains('Add').click()
     cy.scrollTo('bottom')
         cy.get('input').last().wait(3000).click().clear().type('1')
-        cy.get('input').eq(3)
+        cy.get('input').eq(16)
         .click().type('TSLA').type('{enter}')
 
 // add Amazon to portfolio at 5%
     cy.contains('Add').click()
     cy.scrollTo('bottom')
         cy.get('input').last().wait(3000).click().clear().type('5')
-        cy.get('input').eq(5).click().type('AMZN').type('{enter}')
+        cy.get('input').eq(17).click().type('AMZN').type('{enter}')
        
 
 //save portfolio
     cy.get('button').contains('Save').click()
     cy.get('button').contains('Refresh').click()  
-    cy.fixture('testDomain').as('login')
+    cy.fixture('betatestDomain').as('login')
         cy.get('@login').then(domain => {
         cy.visit(domain.test)})  
     
@@ -314,6 +289,7 @@ describe('Reset and build portfolio manually', () => {
         cy.get('button').contains('Reset').click().wait(15000)
 
         
+        cy.visit('https://app.passiv.com/app')
         cy.contains('test').click()
         cy.contains('Portfolio').click().wait(8000)
         cy.scrollTo('bottom')
@@ -346,7 +322,7 @@ describe('Reset and build portfolio manually', () => {
         cy.scrollTo('bottom')
         cy.get('button').contains('Save').click().as('save').wait(4000)
         cy.scrollTo('bottom')
-        cy.get('button').contains('Edit Targets').wait(4000).click()
+        cy.get('button').contains('Edit Model').wait(4000).click()
         cy.get('button').contains('Reset').click().wait(8000)
         cy.get('button').contains('Import').click().wait(8000)
 
@@ -566,4 +542,12 @@ describe('Change name and add connections', () => {
         cy.get('input').clear().type('tesla').type('{enter}')
     })
   
+
+    it('Add Wealthica', () => {
+        cy.get('div').contains('Settings').click().wait(8000)
+        cy.get('button').contains('Add').first().click()
+        cy.get('div').contains('Wealthica').click()
+        cy.get('button').contains('Connect').first().click()
+    })
+
 })
