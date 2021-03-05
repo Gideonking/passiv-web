@@ -1,3 +1,5 @@
+const { cy } = require("date-fns/locale")
+
 // Sidebar_test_live
 describe('Sidebar individual component test', () => {
 
@@ -559,11 +561,29 @@ describe('Add goals', () => {
 })
 
 
-describe('Change name and add connections', () => { 
+describe('Change name and test auth signal', () => { 
     it('Change name', () => {
         cy.get('div').contains('Settings').click().wait(8000)
         cy.get('button').contains('Edit').first().click()
         cy.get('input').clear().type('tesla').type('{enter}')
+    })
+
+    it('test auth', () => {
+        cy.intercept('/api/v1/auth/otp/**', (req) => {
+            req.reply({fixture: 'login_stubs/otp.json'})
+        }).as('otp')
+        
+        cy.get('button').contains('Enable').click()
+    })
+
+    it('test sms', () => {
+        cy.intercept('/api/v1/auth/sms/**', (req) => {
+            req.reply({fixture: 'login_stubs/otp.json'})
+        }).as('otp')
+        
+        cy.get('button').contains('Enable').last().click()
+        cy.get('input').type('506-304-0908')
+        cy.get('button').contains('Submit')
     })
   
 })

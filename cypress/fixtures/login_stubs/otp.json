@@ -1,1 +1,6 @@
-{"token": "832992"}
+{
+	"mfa_required": {
+		"type": "OTP_TOKEN",
+		"secret": "FC54H3CHSAIR266KIXBOZX4C2ZSHX6KG"
+	}
+}
