@@ -1,30 +1,3 @@
-describe('Reset and build portfolio manually', () => { 
-  it('Login test 2', () => {
-    cy.fixture('testDomain').as('login')
-    cy.get('@login').then(domain => {
-    cy.visit((domain.test).concat('/login')) })
-    cy.fixture('my_credentials').as('userFixture')
-    cy.get('@userFixture').then(user => {
-    cy.get('[name=email]').first().type(user.username)
-    cy.get('[placeholder=Password]').type(user.password)
-
-    })
-
-// Verify the sign in button is enabled//
-  cy.get('[data-cy=login-button]').should('not.be.disabled')
-.click({multiple:true})
-
-
-
-  // it('Add Wealthica', () => {
-  //   cy.intercept('POST', '/app/settings/connect/', { connection: 'successful' }).as('connect')
- 
-
-  //   cy.get('div').contains('Settings').click().wait(8000)
-  //   cy.get('button').contains('Add').first().click()
-  //   cy.get('div').contains('Wealthica').click()
-  //   cy.get('button').contains('Connect').click()
-  })
 
   it('Add Alpaca', () => {
       cy.intercept('POST', '/app/settings/connect/', {
@@ -43,22 +16,27 @@ describe('Reset and build portfolio manually', () => {
       cy.get('@userFixture').then(user => {
       cy.get('[name=email]').first().type(user.username)
       cy.get('[placeholder=Password]').type(user.password)
+
+      cy.get('[data-cy=login-button]').should('not.be.disabled')
+    .click({multiple:true})
   
       })
-  
-  // Verify the sign in button is enabled//
-    cy.get('[data-cy=login-button]').should('not.be.disabled')
-  .click({multiple:true})
-      
-      cy.get('div').contains('Settings').click().wait(8000)
-      cy.get('button').contains('Add').first().click()
-      cy.get('div').contains('Alpaca').click()
-      cy.wait('@Alpaca')
 
   })
   
-      })
+  // Verify the sign in button is enabled//
+  it('Test Allocate button', () => {
+    cy.fixture('testDomain').as('login')
+      cy.get('@login').then(domain => {
+      cy.visit((domain.test).concat('/login')) })
+  
+    cy.get('div').contains('Dashboard').click().wait(8000)
+      
+    cy.get('div').contains('Allocate').click().as('allocate')
+      cy.contains('Trades').should('be.visible')
 
+  })    
+    
 
   
   // it('Add Questrade', () => {
